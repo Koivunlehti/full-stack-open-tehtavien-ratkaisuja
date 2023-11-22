@@ -112,6 +112,19 @@ server.delete("/api/persons/:id", (request, response, next) => {
     .catch(error => next(error))
 })
 
+server.put("/api/persons/:id", (request, response, next) => {
+    const person = {
+        "name":request.body.name,
+        "number":request.body.number
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedNote => {
+        response.json(updatedNote)
+    })
+    .catch(error => next(error))
+})
+
 const errorHandler = (error, request, response,next) => {
     console.error(error.message)
 

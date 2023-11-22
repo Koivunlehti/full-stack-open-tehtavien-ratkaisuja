@@ -22,7 +22,7 @@ const deletePerson = (id) => {
 }
 
 const updatePerson = (personObject) => {
-    const request = axios.put("http://localhost:3001/persons/" + personObject.id, personObject)
+    const request = axios.put(phoneBookUrl + "/" + personObject.id, personObject)
     return request.then(response => response.data)
 }
 

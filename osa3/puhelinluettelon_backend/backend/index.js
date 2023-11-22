@@ -1,9 +1,13 @@
 const express = require("express");
 const server = express();
-const morgan = require("morgan")
+const morgan = require("morgan");
+const cors = require("cors");
 
 // Middlewaret
-server.use(express.json())
+
+server.use(cors());
+
+server.use(express.json());
 
 server.use(morgan(function (tokens, req, res) {
     const body = req.body
@@ -15,8 +19,8 @@ server.use(morgan(function (tokens, req, res) {
       '-',
       tokens['response-time'](req, res), 'ms',
       JSON.stringify(body)
-    ].join(' ')
-  }))
+    ].join(' ');
+  }));
 
 // Numerot
 let numbers = [

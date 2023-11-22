@@ -5,7 +5,18 @@ const morgan = require("morgan")
 // Middlewaret
 server.use(express.json())
 
-server.use(morgan("tiny"))
+server.use(morgan(function (tokens, req, res) {
+    const body = req.body
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, 'content-length'), 
+      '-',
+      tokens['response-time'](req, res), 'ms',
+      JSON.stringify(body)
+    ].join(' ')
+  }))
 
 // Numerot
 let numbers = [

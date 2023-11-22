@@ -1,9 +1,11 @@
 const express = require("express");
 const server = express();
-
+const morgan = require("morgan")
 
 // Middlewaret
-server.use(express.json());
+server.use(express.json())
+
+server.use(morgan("tiny"))
 
 // Numerot
 let numbers = [

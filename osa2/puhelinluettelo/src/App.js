@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-import axios from "axios"
+
+import personService from "./services/persons"
 
 const App = () => {
   // Tilamuuttujat
@@ -13,10 +14,8 @@ const App = () => {
 
   // Alkutietojen haku
   useEffect(() => {
-    axios
-    .get("http://localhost:3001/persons")
-    .then(response => {
-      setPersons(response.data)
+    personService.getAll().then(persons  => {
+      setPersons(persons)
     })
   }, [])
 
@@ -29,11 +28,11 @@ const App = () => {
     }
     if (persons.find(person => person.name === addPerson.name) === undefined)
     {
-      axios.post("http://localhost:3001/persons", addPerson).then(() => {
-        setPersons(persons.concat(addPerson))
-        setNewName('')
-        setNewNumber('')
+      personService.addNew(addPerson).then(person => {
+        setPersons(persons.concat(person))
       })
+      setNewName('')
+      setNewNumber('')
     }
     else {
       alert(addPerson.name + " is already added to phonebook")

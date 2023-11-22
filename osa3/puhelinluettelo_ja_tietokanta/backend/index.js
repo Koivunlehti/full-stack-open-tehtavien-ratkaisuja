@@ -25,37 +25,19 @@ server.use(morgan(function (tokens, req, res) {
     ].join(' ');
   }));
 
-// Numerot
-let numbers = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-];
-
 // Osoitteet
-server.get("/info",(request,response) => {
-    response.send(
-        "<p>Phonebook has info for " + numbers.length + " people</p>" +
-        "<p>" + new Date() +"</p>")
+// infosivu
+server.get("/info",(request, response, next) => {
+    Person.countDocuments({})
+    .then(result =>{
+        response.send(
+            "<p>Phonebook has info for " + result + " people</p>" +
+            "<p>" + new Date() +"</p>")
+    })
+    .catch(error => next(error))
 });
 
+// Kaikki henkilöt
 server.get("/api/persons", (request, response, next) => {
     Person.find({})
     .then(persons => {
@@ -64,29 +46,25 @@ server.get("/api/persons", (request, response, next) => {
     .catch(error => next(error))
 }) 
 
-server.get("/api/persons/:id", (request, response) => {
-    const id = Number(request.params.id);
-    const person = numbers.find(person => person.id === id);
-
-    if (person) {
-        response.json(person)
-    } else {
+// Henkilö id:n perusteella
+server.get("/api/persons/:id", (request, response, next) => {
+    Person.findById(request.params.id)
+    .then(person => {
+        if (person) {        
+        response.json(person)      
+    } else {        
         response.status(404).end()
-    }
+    }})
+    .catch(error => next(error))
 });
 
+// Lisää uusi henkilö
 server.post("/api/persons/", (request, response, next) => {
     if (!request.body.name) {
         return response.status(400).json({  
             error: 'Name is missing' 
         })
     }
-    // else if (numbers.find(person => person.name === newPerson.name)) {
-    //     return response.status(400).json({  
-    //         error: 'Name already exists' 
-    //     })
-    // }
-
     if (!request.body.number) {
         return response.status(400).json({  
             error: 'Number is missing' 
@@ -104,6 +82,7 @@ server.post("/api/persons/", (request, response, next) => {
     .catch(error => next(error))
 })
 
+// Poista henkilö
 server.delete("/api/persons/:id", (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
     .then(result => {
@@ -112,6 +91,7 @@ server.delete("/api/persons/:id", (request, response, next) => {
     .catch(error => next(error))
 })
 
+// Muuta henkilöä
 server.put("/api/persons/:id", (request, response, next) => {
     const person = {
         "name":request.body.name,
@@ -124,6 +104,8 @@ server.put("/api/persons/:id", (request, response, next) => {
     })
     .catch(error => next(error))
 })
+
+// Loppupään middlewaret
 
 const errorHandler = (error, request, response,next) => {
     console.error(error.message)

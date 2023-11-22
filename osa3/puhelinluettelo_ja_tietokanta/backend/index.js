@@ -113,7 +113,10 @@ const errorHandler = (error, request, response,next) => {
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
     }
-    if (error.name === 'MongooseError') {
+    else if (error.name === 'ValidationError') {    
+        return response.status(400).json({ error: error.message })
+    }
+    else if (error.name === 'MongooseError') {
         return response.status(500).send({ error: 'database connection timeout' })
     }
 

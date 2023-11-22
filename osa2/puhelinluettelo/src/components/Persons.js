@@ -4,7 +4,7 @@ const Persons = (props) => {
 
     const handleClick = (name, id) => {
         if(window.confirm("Delete " + name + "?")) {
-            props.handleDelete(id)
+            props.handleDelete(id, name)
         }
     }
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-
+import Notification from './components/Notification'
 import personService from "./services/persons"
 
 const App = () => {
@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState("")
-
+  const [errorMessage,setErrorMessage] = useState(null)
   // Alkutietojen haku
   useEffect(() => {
     personService.getAll().then(persons  => {
@@ -30,6 +30,11 @@ const App = () => {
     {
       personService.addNew(addPerson).then(person => {
         setPersons(persons.concat(person))
+
+        setErrorMessage("Added " + addPerson.name)        
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
       setNewName('')
       setNewNumber('')
@@ -40,16 +45,26 @@ const App = () => {
         oldPerson.number = addPerson.number
         personService.updatePerson(oldPerson).then(personUpdated => {
           setPersons(persons.map(person => person.id === personUpdated.id ? personUpdated : person))
-          setNewName('')
-          setNewNumber('')
+          
+          setErrorMessage("Updated " + personUpdated.name)        
+          setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         })
+        setNewName('')
+        setNewNumber('')
       }
     }
   }
 
-  const handleDelete = (id) => {
-    personService.deletePerson(id).then(() => {
+  const handleDelete = (id, name) => {
+    personService.deletePerson(id).then(() => { 
       setPersons(persons.filter(person => person.id !== id))
+
+      setErrorMessage("Deleted "+ name +" succesfully" )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     })
   }
 
@@ -69,6 +84,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage}></Notification>
       <Filter filter={newFilter} handleFilterChange={handleFilterChange}/>
       <h2>add a new</h2>
       <PersonForm name={newName} number={newNumber} handleSubmit={handleSubmit} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />

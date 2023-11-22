@@ -52,6 +52,12 @@ server.get("/api/persons/:id", (request, response) => {
     
 });
 
+server.delete("/api/persons/:id", (request, response) => {
+    const id = Number(request.params.id);
+
+    numbers = numbers.filter(person => person.id !== id) 
+    response.status(204).end()
+})
 // Palvelin käynnistys
 server.listen(3001)
 console.log("Server started in port 3001")

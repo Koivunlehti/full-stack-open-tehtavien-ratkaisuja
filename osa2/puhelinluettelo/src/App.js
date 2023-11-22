@@ -11,7 +11,9 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState("")
-  const [errorMessage,setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+
   // Alkutietojen haku
   useEffect(() => {
     personService.getAll().then(persons  => {
@@ -31,9 +33,9 @@ const App = () => {
       personService.addNew(addPerson).then(person => {
         setPersons(persons.concat(person))
 
-        setErrorMessage("Added " + addPerson.name)        
+        setSuccessMessage("Added " + addPerson.name)        
         setTimeout(() => {
-          setErrorMessage(null)
+          setSuccessMessage(null)
         }, 5000)
       })
       setNewName('')
@@ -46,10 +48,10 @@ const App = () => {
         personService.updatePerson(oldPerson).then(personUpdated => {
           setPersons(persons.map(person => person.id === personUpdated.id ? personUpdated : person))
           
-          setErrorMessage("Updated " + personUpdated.name)        
+          setSuccessMessage("Updated " + personUpdated.name)        
           setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+            setSuccessMessage(null)
+          }, 5000)
         })
         setNewName('')
         setNewNumber('')
@@ -61,7 +63,14 @@ const App = () => {
     personService.deletePerson(id).then(() => { 
       setPersons(persons.filter(person => person.id !== id))
 
-      setErrorMessage("Deleted "+ name +" succesfully" )
+      setSuccessMessage("Deleted "+ name +" succesfully" )
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    }).catch(()=> {
+      setPersons(persons.filter(person => person.id !== id))
+      
+      setErrorMessage("Information of "+ name +" has already been deleted from server")
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -84,7 +93,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage}></Notification>
+      <Notification message={successMessage} cssclass={"success"}></Notification>
+      <Notification message={errorMessage} cssclass={"error"}></Notification>
       <Filter filter={newFilter} handleFilterChange={handleFilterChange}/>
       <h2>add a new</h2>
       <PersonForm name={newName} number={newNumber} handleSubmit={handleSubmit} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />

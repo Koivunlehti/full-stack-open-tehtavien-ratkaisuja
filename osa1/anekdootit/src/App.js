@@ -23,14 +23,31 @@ const App = () => {
     setVotes(new_votes)
   }
 
+  const most_popular = () => {
+    let most_votes_index = 0
+    for (let i = 0; i < votes.length; i++) {
+      console.log("for")
+      if (votes[i] > votes[most_votes_index]){
+        
+        most_votes_index = i
+      }
+    }
+    console.log(most_votes_index)
+    return anecdotes[most_votes_index]
+  }
+
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       {anecdotes[selected]}
       <br />
       has {votes[selected]} votes
       <br/>
       <button onClick={() => {vote(selected)}}>vote</button>
       <button onClick={() => {setSelected(Math.floor(Math.random() * anecdotes.length))}}>next anecdote</button>
+      <br />
+      <h2>Anecdote with most votes</h2>
+      {most_popular()}
     </div>
   )
 }

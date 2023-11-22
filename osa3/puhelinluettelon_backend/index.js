@@ -30,6 +30,12 @@ let numbers = [
 ];
 
 // Osoitteet
+server.get("/info",(request,response) => {
+    response.send(
+        "<p>Phonebook has info for " + numbers.length + " people</p>" +
+        "<p>" + new Date() +"</p>")
+})
+
 server.get("/api/persons", (request, response) => {
     response.json(numbers)
 }) 

@@ -9,14 +9,14 @@ test('dummy returns one', () => {
 
 describe('total likes', () => {
     const listWithOneBlog = [
-      {
-          _id: '5a422aa71b54a676234d17f8',
-          title: 'Testing 1',
-          author: 'Mr Tester',
-          url: 'test_url',
-          likes: 5,
-          __v: 0
-      }
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Testing 1',
+            author: 'Mr Tester',
+            url: 'test_url',
+            likes: 5,
+            __v: 0
+        }
     ]
     const listWithMoreBlogs = [
         {
@@ -106,5 +106,73 @@ describe('favorite blog', () => {
     test('of a bigger list is the one with most likes', () => {
         const result = listHelper.favoriteBlog(listWithMoreBlogs)
         expect(result).toEqual(listWithMoreBlogs[1])
+    })
+})
+
+describe('author with most blogs', () => {
+    const blogs = [
+        {
+            _id: "5a422a851b54a676234d17f7",
+            title: 'Testing 1',
+            author: 'Mr Tester',
+            url: 'test_url',
+            likes: 7,
+            __v: 0
+        },
+        {
+            _id: "5a422aa71b54a676234d17f8",
+            title: 'Something is out there',
+            author: 'Fear',
+            url: 'testtesttest',
+            likes: 5,
+            __v: 0
+        },
+        {
+            _id: "5a422b3a1b54a676234d17f9",
+            title: 'What if this is not working?',
+            author: 'Fear',
+            url: 'testtesttest',
+            likes: 12,
+            __v: 0
+        },
+        {
+            _id: "5a422b891b54a676234d17fa",
+            title: 'Im testing this',
+            author: 'Tester 7',
+            url: 'testtesttest',
+            likes: 10,
+            __v: 0
+        },
+        {
+            _id: "5a422ba71b54a676234d17fb",
+            title: "Im still testing this",
+            author: "Tester 7",
+            url: 'testtesttest',
+            likes: 0,
+            __v: 0
+        },
+        {
+            _id: "5a422bc61b54a676234d17fc",
+            title: "Thousand tests later",
+            author: "Tester 7",
+            url: 'testtesttest',
+            likes: 2,
+            __v: 0
+        }  
+    ]
+
+    test('when empty list is empty object', () => {
+        const result = listHelper.mostBlogs([])
+        expect(result).toEqual({})
+    })
+
+    test('when list has only one blog is the author of the only blog in the list', () => {
+        const result = listHelper.mostBlogs([blogs[0]])
+        expect(result).toEqual({author:"Mr Tester", blogs:1})
+    })
+
+    test('with a bigger list is the one with highest blog count', () => {
+        const result = listHelper.mostBlogs(blogs)
+        expect(result).toEqual({author:"Tester 7", blogs:3})
     })
 })

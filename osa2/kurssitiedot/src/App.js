@@ -33,10 +33,12 @@ const Content = (props) => {
 }
 
 const Total = (props) => {
-  let total = 0
-  for (let i = 0; i < props.course.parts.length; i++) {
-    total += props.course.parts[i].exercises
-  } 
+  // Käytetään reducessa alkuarvona 0, jotta alkuarvoksi ei päädy oliota.
+  const total = props.course.parts.reduce((total, part) => {
+    total += part.exercises 
+    return total
+  }, 0)
+
   return (
     <>
       <p><b>total of {total} exercises </b></p>

@@ -56,10 +56,12 @@ server.get("/info",(request,response) => {
         "<p>" + new Date() +"</p>")
 });
 
-server.get("/api/persons", (request, response) => {
-    Person.find({}).then(persons => {
+server.get("/api/persons", (request, response, next) => {
+    Person.find({})
+    .then(persons => {
         response.json(persons);
     })
+    .catch(error => next(error))
 }) 
 
 server.get("/api/persons/:id", (request, response) => {
@@ -71,10 +73,9 @@ server.get("/api/persons/:id", (request, response) => {
     } else {
         response.status(404).end()
     }
-    
 });
 
-server.post("/api/persons/", (request, response) => {
+server.post("/api/persons/", (request, response, next) => {
     if (!request.body.name) {
         return response.status(400).json({  
             error: 'Name is missing' 
@@ -96,16 +97,35 @@ server.post("/api/persons/", (request, response) => {
         "name":request.body.name,
         "number":request.body.number
     })
-    newPerson.save().then(person => {
+    newPerson.save()
+    .then(person => {
         response.json(person)    
     })
+    .catch(error => next(error))
 })
 
-server.delete("/api/persons/:id", (request, response) => {
-    Person.findByIdAndRemove(request.params.id). then(result => {
+server.delete("/api/persons/:id", (request, response, next) => {
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
         response.status(204).end()
     })
+    .catch(error => next(error))
 })
+
+const errorHandler = (error, request, response,next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    }
+    if (error.name === 'MongooseError') {
+        return response.status(500).send({ error: 'database connection timeout' })
+    }
+
+    next(error)
+}
+
+server.use(errorHandler)
 
 // Palvelin käynnistys
 server.listen(process.env.PORT)

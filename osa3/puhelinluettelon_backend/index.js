@@ -53,19 +53,36 @@ server.get("/api/persons/:id", (request, response) => {
 });
 
 server.post("/api/persons/", (request, response) => {
-    const person = request.body
+    const newPerson = request.body
     let id = Math.random() * 1000
     id = Math.round(id)
-    
-    const newPerson = {
-        id:id,
-        name:person.name,
-        number:person.number
+
+    if (!newPerson.name) {
+        return response.status(400).json({  
+            error: 'Name is missing' 
+        })
+    }
+    else if (numbers.find(person => person.name === newPerson.name)) {
+        return response.status(400).json({  
+            error: 'Name already exists' 
+        })
     }
 
-    numbers = numbers.concat(newPerson)
+    if (!newPerson.number) {
+        return response.status(400).json({  
+            error: 'Number is missing' 
+        })
+    }
 
-    response.json(newPerson)
+    const person = {
+        id:id,
+        name:newPerson.name,
+        number:newPerson.number
+    }
+
+    numbers = numbers.concat(person)
+
+    response.json(person)
 })
 
 server.delete("/api/persons/:id", (request, response) => {

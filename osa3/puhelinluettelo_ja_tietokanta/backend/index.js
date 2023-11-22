@@ -75,36 +75,30 @@ server.get("/api/persons/:id", (request, response) => {
 });
 
 server.post("/api/persons/", (request, response) => {
-    const newPerson = request.body
-    let id = Math.random() * 1000
-    id = Math.round(id)
-
-    if (!newPerson.name) {
+    if (!request.body.name) {
         return response.status(400).json({  
             error: 'Name is missing' 
         })
     }
-    else if (numbers.find(person => person.name === newPerson.name)) {
-        return response.status(400).json({  
-            error: 'Name already exists' 
-        })
-    }
+    // else if (numbers.find(person => person.name === newPerson.name)) {
+    //     return response.status(400).json({  
+    //         error: 'Name already exists' 
+    //     })
+    // }
 
-    if (!newPerson.number) {
+    if (!request.body.number) {
         return response.status(400).json({  
             error: 'Number is missing' 
         })
     }
 
-    const person = {
-        id:id,
-        name:newPerson.name,
-        number:newPerson.number
-    }
-
-    numbers = numbers.concat(person)
-
-    response.json(person)
+    const newPerson = new Person({
+        "name":request.body.name,
+        "number":request.body.number
+    })
+    newPerson.save().then(person => {
+        response.json(person)    
+    })
 })
 
 server.delete("/api/persons/:id", (request, response) => {
@@ -115,5 +109,5 @@ server.delete("/api/persons/:id", (request, response) => {
 })
 
 // Palvelin käynnistys
-server.listen(3001)
+server.listen(process.env.PORT)
 console.log("Server started in port 3001")

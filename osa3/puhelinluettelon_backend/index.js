@@ -52,12 +52,29 @@ server.get("/api/persons/:id", (request, response) => {
     
 });
 
+server.post("/api/persons/", (request, response) => {
+    const person = request.body
+    let id = Math.random() * 1000
+    id = Math.round(id)
+    
+    const newPerson = {
+        id:id,
+        name:person.name,
+        number:person.number
+    }
+
+    numbers = numbers.concat(newPerson)
+
+    response.json(newPerson)
+})
+
 server.delete("/api/persons/:id", (request, response) => {
     const id = Number(request.params.id);
 
     numbers = numbers.filter(person => person.id !== id) 
     response.status(204).end()
 })
+
 // Palvelin käynnistys
 server.listen(3001)
 console.log("Server started in port 3001")

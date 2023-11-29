@@ -77,8 +77,34 @@ test('adding new blog without likes gives likes a value of 0', async () => {
     .send(newBlog)
 
     const response = await api.get('/api/blogs')
-    
+
     expect(response.body[2].likes).toEqual(0)
+}) 
+
+test('adding new blog without title fails', async () => {
+    const newBlog = {    
+        author: "Tester 4",
+        url: "test4",
+        likes: 10
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+}) 
+
+test('adding new blog without url fails', async () => {
+    const newBlog = {    
+        title: 'Test Blog 4', 
+        author: "Tester 4",
+        likes: 10
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 }) 
 
 afterAll(async () => {

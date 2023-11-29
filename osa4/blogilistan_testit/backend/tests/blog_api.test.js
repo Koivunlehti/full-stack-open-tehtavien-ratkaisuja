@@ -41,6 +41,30 @@ test('id-field of returned blog is named id', async () => {
     expect(response.body[0].id).toBeDefined()
 })
 
+test('adding new blogs', async () => {
+    const newBlog = {
+        title: 'Test Blog 3',    
+        author: "Tester 3",
+        url: "test3",
+        likes: 10
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)   
+
+    const response = await api.get('/api/blogs')
+
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+
+    expect(response.body[2].title).toContain("Test Blog 3")
+    expect(response.body[2].author).toContain("Tester 3")
+    expect(response.body[2].url).toContain("test3")
+    expect(response.body[2].likes).toEqual(10)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })

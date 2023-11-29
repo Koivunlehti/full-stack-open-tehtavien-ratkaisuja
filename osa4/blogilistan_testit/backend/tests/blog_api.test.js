@@ -65,6 +65,22 @@ test('adding new blogs', async () => {
     expect(response.body[2].likes).toEqual(10)
 })
 
+test('adding new blog without likes gives likes a value of 0', async () => {
+    const newBlog = {
+        title: 'Test Blog 4',    
+        author: "Tester 4",
+        url: "test4",
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+
+    const response = await api.get('/api/blogs')
+    
+    expect(response.body[2].likes).toEqual(0)
+}) 
+
 afterAll(async () => {
     await mongoose.connection.close()
 })

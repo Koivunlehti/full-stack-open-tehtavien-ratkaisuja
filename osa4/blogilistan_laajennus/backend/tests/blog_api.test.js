@@ -131,6 +131,32 @@ test('delete blog using wrong id format',async () => {
     expect(response.body).toHaveLength(initialBlogs.length)
 }) 
 
+test('updating existing blog', async () => {
+    const newBlog = {
+        title: 'updated blog',    
+        author: "tester 10",
+        url: "test10",
+        likes: 13
+    }
+
+    let response = await api.get('/api/blogs')
+
+    await api
+    .put('/api/blogs/'+ response.body[0].id)
+    .send(newBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)   
+
+    response = await api.get('/api/blogs')
+
+    expect(response.body).toHaveLength(initialBlogs.length)
+
+    expect(response.body[0].title).toContain(newBlog.title)
+    expect(response.body[0].author).toContain(newBlog.author)
+    expect(response.body[0].url).toContain(newBlog.url)
+    expect(response.body[0].likes).toEqual(newBlog.likes)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })

@@ -1,10 +1,21 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const userSchema = mongoose.Schema({
-    username: String,
+    username: {
+        type: String,
+        required: [true, "username is required."],
+        unique: true,
+        minLength: [3,"username is too short."]
+    },
     name: String,
-    password: String,
+    password: {
+        type: String,
+        required: [true, "password is required."]
+    }
 })
+
+userSchema.plugin(uniqueValidator,{ message: '{PATH} has to be unique.'})
 
 userSchema.set('toJSON', {
     transform: (document, returnedObject) => {

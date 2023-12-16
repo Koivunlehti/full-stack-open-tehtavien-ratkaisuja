@@ -4,9 +4,10 @@ GET http://localhost:3001/api/blogs
 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer put_token_here
 
 {
-    "title": "test 4",
+    "title": "test 100",
     "author": "test 3",
     "url": "test",
     "likes": 10

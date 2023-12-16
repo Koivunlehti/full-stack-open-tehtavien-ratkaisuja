@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require("../models/blog")
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate("user", {id:1, username:1, name:1})
@@ -9,11 +10,30 @@ blogsRouter.get('/', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response) => {
-    if (!request.body.title || !request.body.url) {
-        return response.status(400).end()
+    const authorization = request.get('authorization')
+    let token = ""
+    if (authorization && authorization.startsWith('Bearer ')) {    
+        token = authorization.replace('Bearer ', '')  
     }
 
-    const user = await User.findOne()
+    let decodedToken = undefined
+    try {
+        decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+    }
+    catch (error){
+        console.log(error)
+        return response.status(401).json({error: "invalid token"})
+    }
+    
+    if (!request.body.title || !request.body.url) {
+        return response.status(400).json({error: "a new blog needs to have at least a title and url"})
+    }
+
+    const user = await User.findById(decodedToken.id)
+    
+    if (!user) {
+        return response.status(400).json({error: "cannot find user"})
+    }
 
     const newBlog = {
         title: request.body.title,    
